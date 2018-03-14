@@ -16,7 +16,7 @@ Anyone can directly contribute to our integrations by opening their own branch a
 When creating code to be merged into our project, please adhere to the following as best you can
 * Create variable and method names that describe their functionality
 * Spaces, not tabs
-* [Our eclipse formatting used in all our projects](https:github.com/blackducksoftware/integration-resources/eclipse/IntegrationOssFormat.xml)
+* [Our eclipse formatting used in all our projects](https://blackducksoftware.github.io/integration-resources/eclipse/IntegrationOssFormat.xml)
 
 ##Other ways to contribute
 In addition to the options you have above, you can also contirbute to our project by helping others who are seeking help. If you see an open issue that you know the answer to, then feel free to respond to the users inquiry. This will help us to get everyone the answers they need as soon as possible.
