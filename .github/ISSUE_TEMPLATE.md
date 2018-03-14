@@ -1,22 +1,16 @@
-###Issue template
-
-##Expected behavior
--
-
-##Actual behavior
--
-
-##Steps to reproduce
--
--
--
-
-##Version
-###Project version
--
-
-###Language version
--
-
-###OS
--
+# Issue template
+## Expected behavior
+*
+## Actual behavior
+*
+## Steps to Reproduce
+*
+*
+*
+## Version
+**Project Version:**
+*
+**Language Version:**
+*
+**OS:**
+*
