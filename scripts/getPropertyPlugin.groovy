@@ -9,7 +9,7 @@ executions {
      * This will attempt retrieve a property from a repoPath and return it as plain text
      *
      * This can be triggered with the following curl command:
-     * curl -X GET -u admin:password "http://ARTIFACTORY_SERVER/artifactory/api/plugins/execute/getProperty?params=repoPath={repoPath}|propertyKey={propertyKey}}"
+     * curl -X GET "http://ARTIFACTORY_SERVER/artifactory/api/plugins/execute/getProperty?params=repoPath={repoPath}|propertyKey={propertyKey}}"
      * 
      * An example would be getting the version of detect to use:
      * curl -X GET "http://test-repo.blackducksoftware.com/artifactory/api/plugins/execute/getProperty?params=repoPath=bds-integrations-release/com/blackducksoftware/integration/hub-detect|propertyKey=DETECT_LATEST"
