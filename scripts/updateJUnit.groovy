@@ -40,7 +40,7 @@ private void updateFile(File fileToFix) {
             cleanedLine = NEW_LINE + 'import static org.junit.jupiter.api.Assertions.*;' + NEW_LINE
             foundPackageDeclaration = false
           } else {
-            cleanedLine = cleanedLine.replace('import org.junit.Test;', 'import org.junit.jupiter.api.Test;')
+            cleanedLine = cleanedLine.replace('import org.junit.Test', 'import org.junit.jupiter.api.Test')
             cleanedLine = cleanedLine.replace('Assert.', '')
           }
         }
