@@ -11,6 +11,8 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
+def daysToInclude = 7
+
 List<String> knownUsers = new File('known_users.txt').readLines()
 Map<String, String> emailsToUsers = createEmailsToUsers(knownUsers)
 
@@ -24,7 +26,7 @@ DateTimeFormatter iso8601 = DateTimeFormatter.ofPattern('yyyy-MM-dd\'T\'HH:mm:ss
 DateTimeFormatter isoShort = DateTimeFormatter.ofPattern('MM/dd')
 DateTimeFormatter easternClock = DateTimeFormatter.ofPattern('yyyy-MM-dd hh:mm:ss a')
 Instant now = Instant.now()
-Instant before = now.minus(3, ChronoUnit.DAYS)
+Instant before = now.minus(daysToInclude, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS)
 def since = before.atZone(ZoneOffset.UTC).format(iso8601)
 def until = now.atZone(ZoneOffset.UTC).format(iso8601)
 def shortSince = before.atZone(ZoneOffset.UTC).format(isoShort)
