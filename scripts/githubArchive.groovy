@@ -37,5 +37,5 @@ private HttpPatch createPatch(String repoName) {
 
 private void addHeaders(HttpMessage httpMessage) {
     httpMessage.addHeader('Accept', 'application/vnd.github.v3+json')
-    httpMessage.addHeader('Authorization', "token aadc6c9c2c6661385b84e8ac79924429330c6733")
+    httpMessage.addHeader('Authorization', "token ${System.getenv('GITHUB_AUTH_TOKEN')}")
 }
