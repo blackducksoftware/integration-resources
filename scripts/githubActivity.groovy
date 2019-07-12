@@ -11,7 +11,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-def daysToInclude = 7
+def daysToInclude = 14
 
 List<String> knownUsers = new File('known_users.txt').readLines()
 Map<String, String> emailsToUsers = createEmailsToUsers(knownUsers)

@@ -26,6 +26,7 @@ while (!done) {
         page++
     }
 }
+println allRepoNames.size()
 
 def reposWithNoRecentCommits = allRepoNames.findAll { repoName ->
     0 == getCommitCountForRepo(repoName)
@@ -49,7 +50,7 @@ private HttpGet getPublicRepos(int page) {
 }
 
 private HttpGet getRecentCommitsForRepo(String repo) {
-    new HttpGet("https://api.github.com/repos/${repo}/commits?since=2018-01-01T00:00:00Z")
+    new HttpGet("https://api.github.com/repos/${repo}/commits?since=2019-01-01T00:00:00Z")
 }
 
 private Object getJsonResponse(HttpUriRequest httpUriRequest) {

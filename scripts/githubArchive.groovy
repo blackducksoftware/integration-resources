@@ -12,12 +12,17 @@ import org.apache.http.impl.client.HttpClientBuilder
 
 def client = HttpClientBuilder.create().build()
 
-def repoNames = ['blackduck-common-api']
+def toKeep = []
 
-repoNames.each { repoName ->
+def repoNames = []
+
+repoNames.findAll { repoName ->
+    !toKeep.contains(repoName)
+}.each { repoName ->
     HttpPatch httpPatch = createPatch(repoName)
     def response = client.execute(httpPatch)
-    println response
+    println repoName + ' - ' + response.getStatusLine().getStatusCode()
+    response.close()
 }
 
 private HttpPatch createPatch(String repoName) {
@@ -32,5 +37,5 @@ private HttpPatch createPatch(String repoName) {
 
 private void addHeaders(HttpMessage httpMessage) {
     httpMessage.addHeader('Accept', 'application/vnd.github.v3+json')
-    httpMessage.addHeader('Authorization', "token ${System.getenv('GITHUB_AUTH_TOKEN')}")
+    httpMessage.addHeader('Authorization', "token aadc6c9c2c6661385b84e8ac79924429330c6733")
 }
