@@ -1,0 +1,3 @@
+synopsys-detect-plugin|Synopsys Detect for Jenkins
+synopsys-coverity-plugin|Synopsys Coverity for Jenkins
+blackduck-jira|Black Duck JIRA Plugin
