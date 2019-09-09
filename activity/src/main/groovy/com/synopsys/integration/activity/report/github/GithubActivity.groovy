@@ -1,24 +1,52 @@
-@Grab(group = 'org.apache.httpcomponents', module = 'httpclient', version = '4.5.2')
-@Grab(group = 'org.apache.httpcomponents', module = 'httpcore', version = '4.4.11')
+/*
+ * activity
+ *
+ * Copyright (c) 2019 Synopsys, Inc.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package com.synopsys.integration.activity.report.github
 
+import com.synopsys.integration.activity.report.Report
+import com.synopsys.integration.activity.util.KnownUsers
+import com.synopsys.integration.activity.util.Repositories
 import groovy.json.JsonSlurper
 import org.apache.http.HttpMessage
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-class GithubActivity {
-    String computeGithubActivity(int daysToInclude) {
-        List<String> knownUsers = new File('known_users.txt').readLines()
-        Map<String, String> emailsToUsers = createEmailsToUsers(knownUsers)
+@Component
+class GithubActivity extends Report {
+    @Autowired
+    KnownUsers knownUsers
 
-        List<String> repos = new File('repositories.txt').readLines()
-        Map<String, String> repoNamesToSimpleNames = createRepoNamesToSimpleNames(repos)
+    @Autowired
+    Repositories repositories
 
+    String computeContents(int daysToInclude) {
+        //TODO add releases during time range
         def jsonSlurper = new JsonSlurper()
         def client = HttpClientBuilder.create().build()
 
@@ -36,7 +64,7 @@ class GithubActivity {
 
         def repoToEmails = new HashMap<String, Set<String>>()
 
-        repoNamesToSimpleNames.each { repoName, simpleName ->
+        repositories.repositories.each { repoName ->
             def done = false
             def page = 1
             while (!done) {
@@ -46,7 +74,7 @@ class GithubActivity {
                 if (0 == jsonResponse.size()) {
                     done = true
                 } else {
-                    Set<String> emails = getEmails(jsonResponse, emailsToUsers)
+                    Set<String> emails = getEmails(jsonResponse)
                     if (!emails.empty) {
                         if (!repoToEmails.containsKey(repoName)) {
                             repoToEmails.put(repoName, new HashSet<>())
@@ -93,7 +121,7 @@ class GithubActivity {
         }.each { name ->
             content.append "<tr><td class=\"paddingBetweenCols\"><b>${name}</b></td>\n"
             content.append '<td class=\"paddingBetweenCols\">' + emailToRepos.get(name).collect {
-                repoNamesToSimpleNames.get(it)
+                repositories.getSimpleName(it)
             }.toSorted { a, b -> a <=> b }.join(', ') + '</td></tr>\n'
             content.append '<tr><td>&nbsp</td></tr>\n'
         }
@@ -101,10 +129,10 @@ class GithubActivity {
 
         content.append '<table>\n'
         reposWithCommits.toSorted { a, b ->
-            repoNamesToSimpleNames.get(a) <=> repoNamesToSimpleNames.get(b)
+            repositories.getSimpleName(a) <=> repositories.getSimpleName(b)
         }.each { repo ->
             content.append '<tr>\n'
-            content.append "<td>${repoNamesToSimpleNames.get(repo)}</td><td><a href=\"https://github.com/${repo}\">${repo}</a></td>\n"
+            content.append "<td>${repositories.getSimpleName(repo)}</td><td><a href=\"https://github.com/${repo}\">${repo}</a></td>\n"
             content.append '</tr>\n'
         }
         content.append '</table>\n'
@@ -120,33 +148,6 @@ class GithubActivity {
         content.toString()
     }
 
-    private Map<String, String> createEmailsToUsers(List<String> knownUsers) {
-        Map<String, String> map = [:]
-
-        knownUsers.each { line ->
-            String[] tokens = line.split("\\|")
-            String name = tokens[0]
-            tokens[1..-1].each { token ->
-                map.put(token, name)
-            }
-        }
-
-        map
-    }
-
-    private Map<String, String> createRepoNamesToSimpleNames(List<String> repos) {
-        repos.collectEntries { repoLine ->
-            String[] tokens = repoLine.split("\\|")
-            String name = tokens[0]
-            String value = name.substring(name.lastIndexOf('/') + 1)
-            if (tokens.size() > 1) {
-                value = tokens[1]
-            }
-
-            [name, value]
-        }
-    }
-
     private HttpGet getCommitsForRepo(String repo, int page, String since, String until) {
         HttpGet get = new HttpGet("https://api.github.com/repos/${repo}/commits?page=${page}&since=${since}&until=${until}")
         addHeaders(get)
@@ -159,13 +160,13 @@ class GithubActivity {
         httpMessage.addHeader('Authorization', "token ${System.getenv('GITHUB_AUTH_TOKEN')}")
     }
 
-    private Set<String> getEmails(def jsonResponse, Map<String, String> emailToUser) {
+    private Set<String> getEmails(def jsonResponse) {
         Set<String> emails = new HashSet<String>()
         jsonResponse.each {
             def email = it['commit']['author']['email']
             if (email && !email.startsWith('serv-builder')) {
-                if (emailToUser.containsKey(email)) {
-                    emails.add(emailToUser.get(email))
+                if (knownUsers.containsEmail(email)) {
+                    emails.add(knownUsers.getNameForEmail(email))
                 } else {
                     emails.add(email)
                 }
@@ -174,4 +175,5 @@ class GithubActivity {
 
         return emails
     }
+
 }

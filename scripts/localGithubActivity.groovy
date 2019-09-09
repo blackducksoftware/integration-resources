@@ -9,3 +9,9 @@ println githubActivityContent
 String teamActivityFilename = "C:\\Users\\ekerwin\\Documents\\team_activity_${System.currentTimeMillis()}.html"
 new File(teamActivityFilename) << githubActivityContent
 "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe ${teamActivityFilename}".execute()
+
+println content
+String teamActivityFilename = "~/atom_workspace/swipedir/code_quality_${System.currentTimeMillis()}.html"
+new File(teamActivityFilename) << content
+"/Applications/Vivaldi.app/Contents/MacOS/Vivaldi ${teamActivityFilename}".execute()
+

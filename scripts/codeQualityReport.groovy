@@ -2,12 +2,10 @@
 @Grab(group = 'org.apache.httpcomponents', module = 'httpcore', version = '4.4.11')
 
 import groovy.json.JsonSlurper
-import org.apache.http.HttpMessage
 import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
 
-import java.net.URLEncoder
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -45,9 +43,9 @@ repoNamesToSimpleNames.each { repoName, simpleName ->
         if (jsonbuildsResponse.'@type' == 'error' || jsonbuildsResponse.'@pagination'.count == 0) {
             done = true
         } else {
-            for ( build in jsonbuildsResponse.builds ) {
+            for (build in jsonbuildsResponse.builds) {
                 done = (build.started_at != null && Instant.parse(build.started_at).isBefore(before))
-                if ( done ) break
+                if (done) break
                 if (build.branch?.name != 'master' || build.state == 'cancelled') continue
 
                 if (!repoStatus.latestBuildStatus) {
@@ -101,7 +99,7 @@ content.append '<body>\n'
 content.append "<span>In the last ${daysToInclude} days</span><br />\n"
 content.append '<br />\n'
 content.append '<table>\n'
-simpleNameToStatus.toSorted{ it.key }.each { simpleName, repoStatus ->
+simpleNameToStatus.toSorted { it.key }.each { simpleName, repoStatus ->
     content.append "<tr><th colspan=2 style='text-align: left;'>${simpleName}</th></tr>\n"
     content.append "<tr><td style='text-align: right;'>Quality gate:</td><td>${repoStatus.sonarStatus}</td></tr>\n"
     content.append "<tr><td style='text-align: right;'>Latest build:</td><td>${repoStatus.latestBuildStatus.toUpperCase()}</td></tr>\n"
@@ -111,7 +109,7 @@ simpleNameToStatus.toSorted{ it.key }.each { simpleName, repoStatus ->
 content.append '</table>\n'
 
 content.append '<table>\n'
-simpleNameToStatus.toSorted{ it.key }.each { simpleName, repoStatus ->
+simpleNameToStatus.toSorted { it.key }.each { simpleName, repoStatus ->
     content.append '<tr>\n'
     content.append "<td>${simpleName}</td><td><a href=${repoStatus.gitHubUrl}>${repoStatus.gitHubUrl}</a></td>\n"
     content.append '</tr>\n'
@@ -197,6 +195,6 @@ class RepoStatus {
     }
 
     def getPassPercentage() {
-        ((totalBuildsPassed / totalBuildsForRepo)*100).round(0)
+        ((totalBuildsPassed / totalBuildsForRepo) * 100).round(0)
     }
 }

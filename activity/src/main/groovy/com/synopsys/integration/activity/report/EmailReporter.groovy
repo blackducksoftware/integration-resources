@@ -1,7 +1,29 @@
-@Grab(group = 'com.sun.mail', module = 'javax.mail', version = '1.6.2')
-@Grab(group = 'org.jsoup', module = 'jsoup', version = '1.12.1')
+/*
+ * activity
+ *
+ * Copyright (c) 2019 Synopsys, Inc.
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package com.synopsys.integration.activity.report
 
 import org.jsoup.Jsoup
+import org.springframework.stereotype.Component
 
 import javax.mail.Message
 import javax.mail.MessagingException
@@ -12,12 +34,13 @@ import javax.mail.internet.MimeBodyPart
 import javax.mail.internet.MimeMessage
 import javax.mail.internet.MimeMultipart
 
-class Emailer {
-    void sendEmail(String to, String from, String subject, String host, String html) {
-        String text = Jsoup.parse(html).text()
+@Component
+class EmailReporter extends Reporter<EmailReportContext> {
+    void produceReport(String contents, EmailReportContext reportContext) {
+        String text = Jsoup.parse(contents).text()
 
         Properties properties = new Properties()
-        properties.setProperty('mail.smtp.host', host)
+        properties.setProperty('mail.smtp.host', reportContext.host)
 
         Session session = Session.getDefaultInstance(properties)
 
@@ -26,7 +49,7 @@ class Emailer {
 
             // add from low fidelity to high fidelity
             addTextBody(text, emailContent)
-            addHtmlBody(html, emailContent)
+            addHtmlBody(contents, emailContent)
 
             def emailBody = new MimeBodyPart()
             emailBody.setContent(emailContent)
@@ -37,15 +60,15 @@ class Emailer {
             // if we ever wanted to add attachments, they'd go here, attached to the fullEmailMessage
 
             MimeMessage message = new MimeMessage(session)
-            message.setFrom(new InternetAddress(from))
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to))
-            message.setSubject(subject)
+            message.setFrom(new InternetAddress(reportContext.from))
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(reportContext.to))
+            message.setSubject(reportContext.subject)
             message.setContent(fullEmailMessage)
 
             Transport.send(message)
             System.out.println('Sent message successfully....')
-        } catch (MessagingException mex) {
-            mex.printStackTrace()
+        } catch (MessagingException e) {
+            e.printStackTrace()
         }
     }
 

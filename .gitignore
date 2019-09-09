@@ -11,5 +11,5 @@ bin/
 out/
 
 # build tool
-.gradle/
+gradle/
 build/
