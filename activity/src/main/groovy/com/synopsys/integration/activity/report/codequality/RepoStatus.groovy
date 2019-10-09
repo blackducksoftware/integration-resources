@@ -22,8 +22,6 @@
  */
 package com.synopsys.integration.activity.report.codequality
 
-import org.springframework.util.NumberUtils
-
 class RepoStatus {
     String gitHubUrl
     String sonarStatus = 'NOT FOUND'
