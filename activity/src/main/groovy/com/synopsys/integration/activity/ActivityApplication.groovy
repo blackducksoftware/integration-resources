@@ -1,7 +1,7 @@
 /*
  * activity
  *
- * Copyright (c) 2019 Synopsys, Inc.
+ * Copyright (c) 2020 Synopsys, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -35,7 +35,7 @@ class ActivityApplication implements ApplicationRunner {
 
     static void main(final String[] args) {
         SpringApplicationBuilder builder = new SpringApplicationBuilder(ActivityApplication.class)
-        builder.logStartupInfo(false)
+        builder.logStartupInfo(true)
         builder.run(args)
     }
 

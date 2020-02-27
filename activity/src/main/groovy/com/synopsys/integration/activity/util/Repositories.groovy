@@ -1,7 +1,7 @@
 /*
  * activity
  *
- * Copyright (c) 2019 Synopsys, Inc.
+ * Copyright (c) 2020 Synopsys, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -71,6 +71,10 @@ class Repositories {
         addRepository('blackducksoftware/synopsys-detect', 'detect')
         addRepository('jenkinsci/synopsys-detect-plugin', 'detect-jenkins')
         addRepository('jenkinsci/synopsys-coverity-plugin', 'coverity-jenkins')
+        addRepository('synopsys-sig/coverity-common-api')
+        addRepository('synopsys-sig/jenkins-annotation-processor')
+        addRepository('synopsys-sig/jenkins-common')
+        addRepository('synopsys-sig/synopsys-polaris-plugin', 'polaris-jenkins')
         addRepository('synopsys-sig/synopsys-detect-scripts')
 
         addSonarOverride('jenkinsci/synopsys-detect-plugin', 'Synopsys Detect for Jenkins')

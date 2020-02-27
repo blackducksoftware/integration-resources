@@ -1,7 +1,7 @@
 /*
  * activity
  *
- * Copyright (c) 2019 Synopsys, Inc.
+ * Copyright (c) 2020 Synopsys, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -23,12 +23,15 @@
 package com.synopsys.integration.activity.report.github
 
 import com.synopsys.integration.activity.report.Report
+import com.synopsys.integration.activity.util.GitHubRepositories
+import com.synopsys.integration.activity.util.GitHubRepository
 import com.synopsys.integration.activity.util.KnownUsers
-import com.synopsys.integration.activity.util.Repositories
 import groovy.json.JsonSlurper
 import org.apache.http.HttpMessage
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.HttpClientBuilder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -43,7 +46,7 @@ class GithubActivity extends Report {
     KnownUsers knownUsers
 
     @Autowired
-    Repositories repositories
+    GitHubRepositories repositories
 
     String computeContents(int daysToInclude) {
         //TODO add releases during time range
@@ -62,13 +65,13 @@ class GithubActivity extends Report {
         def sinceEastern = before.atZone(TimeZone.getTimeZone("America/New_York").toZoneId()).format(easternClock)
         def untilEastern = now.atZone(TimeZone.getTimeZone("America/New_York").toZoneId()).format(easternClock)
 
-        def repoToEmails = new HashMap<String, Set<String>>()
+        def repoToEmails = new HashMap<GitHubRepository, Set<String>>()
 
-        repositories.repositories.each { repoName ->
+        repositories.getGitHubRepositories( { client.execute(it) }, jsonSlurper).each { repository ->
             def done = false
             def page = 1
             while (!done) {
-                def get = getCommitsForRepo(repoName, page, since, until)
+                def get = getCommitsForRepo(repository.fullName, page, since, until)
                 def response = client.execute(get)
                 def jsonResponse = jsonSlurper.parse(response.getEntity().getContent())
                 if (0 == jsonResponse.size()) {
@@ -76,18 +79,18 @@ class GithubActivity extends Report {
                 } else {
                     Set<String> emails = getEmails(jsonResponse)
                     if (!emails.empty) {
-                        if (!repoToEmails.containsKey(repoName)) {
-                            repoToEmails.put(repoName, new HashSet<>())
+                        if (!repoToEmails.containsKey(repository)) {
+                            repoToEmails.put(repository, new HashSet<>())
                         }
-                        repoToEmails.get(repoName).addAll(emails)
+                        repoToEmails.get(repository).addAll(emails)
                     }
                     page++
                 }
             }
         }
 
-        def reposWithCommits = new HashSet<String>()
-        def emailToRepos = new HashMap<String, Set<String>>()
+        def reposWithCommits = new HashSet<GitHubRepository>()
+        def emailToRepos = new HashMap<String, Set<GitHubRepository>>()
         repoToEmails.each { repo, emails ->
             reposWithCommits.add(repo)
             emails.each { email ->
@@ -121,7 +124,7 @@ class GithubActivity extends Report {
         }.each { name ->
             content.append "<tr><td class=\"paddingBetweenCols\"><b>${name}</b></td>\n"
             content.append '<td class=\"paddingBetweenCols\">' + emailToRepos.get(name).collect {
-                repositories.getSimpleName(it)
+                it.simpleName
             }.toSorted { a, b -> a <=> b }.join(', ') + '</td></tr>\n'
             content.append '<tr><td>&nbsp</td></tr>\n'
         }
@@ -129,10 +132,10 @@ class GithubActivity extends Report {
 
         content.append '<table>\n'
         reposWithCommits.toSorted { a, b ->
-            repositories.getSimpleName(a) <=> repositories.getSimpleName(b)
+            a.simpleName <=> b.simpleName
         }.each { repo ->
             content.append '<tr>\n'
-            content.append "<td>${repositories.getSimpleName(repo)}</td><td><a href=\"https://github.com/${repo}\">${repo}</a></td>\n"
+            content.append "<td>${repo.simpleName}</td><td><a href=\"https://github.com/${repo.fullName}\">${repo.fullName}</a></td>\n"
             content.append '</tr>\n'
         }
         content.append '</table>\n'
