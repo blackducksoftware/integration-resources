@@ -1,7 +1,7 @@
 /*
  * activity
  *
- * Copyright (c) 2019 Synopsys, Inc.
+ * Copyright (c) 2020 Synopsys, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -75,7 +75,7 @@ class CodeQuality extends Report {
                     for (build in jsonbuildsResponse.builds) {
                         done = (build.started_at != null && Instant.parse(build.started_at).isBefore(before))
                         if (done) break
-                        if (build.branch?.name != 'master' || build.state == 'cancelled') continue
+                        if (build.branch?.getSimpleName != 'master' || build.state == 'cancelled') continue
 
                         if (!repoStatus.latestBuildStatus) {
                             repoStatus.latestBuildStatus = build.state

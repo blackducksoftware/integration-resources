@@ -1,4 +1,4 @@
-/*
+/**
  * activity
  *
  * Copyright (c) 2020 Synopsys, Inc.
@@ -20,19 +20,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.synopsys.integration.activity.report
+package com.synopsys.integration.activity.util;
 
-class EmailReportContext extends ReportContext {
-    String to
-    String from
-    String subject
-    String host
+public class GitHubRepository {
+    private final String simpleName;
+    private final String fullName;
+    private final String sonarName;
 
-    EmailReportContext(String to, String from, String subject, String host) {
-        this.to = to
-        this.from = from
-        this.subject = subject
-        this.host = host
+    public GitHubRepository(final String simpleName, final String fullName, final String sonarName) {
+        this.simpleName = simpleName;
+        this.fullName = fullName;
+        this.sonarName = sonarName;
     }
 
+    public String getSimpleName() {
+        return simpleName;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getSonarName() {
+        return sonarName;
+    }
 }

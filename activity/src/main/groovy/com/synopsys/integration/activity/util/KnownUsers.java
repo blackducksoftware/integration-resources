@@ -1,7 +1,7 @@
 /**
  * activity
  *
- * Copyright (c) 2019 Synopsys, Inc.
+ * Copyright (c) 2020 Synopsys, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements. See the NOTICE file
@@ -63,6 +63,7 @@ public class KnownUsers {
         addUser("Jake", "jmathews@blackducksoftware.com");
         addUser("Jake", "jake.mathews.email@gmail.com");
         addUser("Alex", "alex.crowley@synopsys.com");
+        addUser("Alex", "51929980+crowleySynopsys@users.noreply.github.com");
     }
 
     public boolean containsEmail(String email) {
