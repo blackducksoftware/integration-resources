@@ -23,22 +23,23 @@
 package com.synopsys.integration.activity.util
 
 import groovy.json.JsonSlurper
+
 import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.client.utils.URIBuilder
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class GitHubRepositories {
-    private Map<String, String> simpleNameToSonarOverride = new HashMap<>()
-    private Map<String, String> simpleNameToOverride = new HashMap<>()
-    private List<GitHubRepository> gitHubRepositories = []
+public class GitHubRepositories {
+    private final Map<String, String> simpleNameToSonarOverride
+    private final Map<String, String> simpleNameToOverride
+    private final List<GitHubRepository> gitHubRepositories
 
-    private final Logger logger = LoggerFactory.getLogger(GitHubRepositories.class);
+    public GitHubRepositories() {
+        this.gitHubRepositories = new ArrayList<>()
+        this.simpleNameToOverride = new HashMap<>()
+        this.simpleNameToSonarOverride = new HashMap<>()
 
-    GitHubRepositories() {
         simpleNameToOverride.put('black-duck-radar', 'radar')
         simpleNameToOverride.put('blackduck-alert', 'alert')
         simpleNameToOverride.put('blackduck-artifactory', 'artifactory')
@@ -59,16 +60,16 @@ class GitHubRepositories {
         simpleNameToSonarOverride.put('blackduck-jira', 'Black Duck JIRA Plugin')
     }
 
-    public List<GitHubRepository> getGitHubRepositories(Closure<HttpResponse> clientExecutor, JsonSlurper jsonSlurper) {
+    public List<GitHubRepository> getGitHubRepositories(Closure<HttpResponse> clientExecutor, JsonSlurper jsonSlurper) throws URISyntaxException, IOException {
         if (gitHubRepositories.isEmpty()) {
-            def done = false
-            def page = 1
-            while (!done) {
+            boolean done = false
+            for (int page = 1; !done; page++) {
                 final URI uri = new URIBuilder()
-                        .setScheme("https")
-                        .setHost("api.github.com")
-                        .setPath("/search/repositories")
-                        .setCustomQuery("q=topic:integration-team+org:synopsys-sig+org:blackducksoftware&page=${page}")
+                        .setScheme('https')
+                        .setHost('api.github.com')
+                        .setPath('/search/repositories=')
+                        .addParameter('q','topic:integration-team+org:synopsys-sig+org:blackducksoftware+org:jenkinsci')
+                        .addParameter('page', Integer.toString(page))
                         .build()
 
                 final HttpGet get = new HttpGet(uri)
@@ -79,19 +80,18 @@ class GitHubRepositories {
                 if (jsonResponse.items) {
                     jsonResponse.items.each {
                         if (it.archived == false) {
-                            def simpleName = simpleNameToOverride.getOrDefault(it.name, it.name)
-                            def sonarName = simpleNameToSonarOverride.getOrDefault(it.name, it.name)
+                            final String simpleName = simpleNameToOverride.getOrDefault(it.name, it.name)
+                            final String sonarName = simpleNameToSonarOverride.getOrDefault(it.name, it.name)
                             gitHubRepositories.add(new GitHubRepository(simpleName, it.full_name, sonarName))
                         }
                     }
                 } else {
                     done = true
                 }
-                page++
             }
         }
 
-        gitHubRepositories
+        return gitHubRepositories
     }
 
 }

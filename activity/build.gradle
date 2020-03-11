@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.blackducksoftware.integration:common-gradle-plugin:1.1.1'
+        classpath 'com.synopsys.integration:common-gradle-plugin:1.1.1'
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.1.7.RELEASE'
     }
 }
@@ -15,7 +15,7 @@ group = 'com.synopsys.integration'
 
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'com.blackducksoftware.integration.solution'
+apply plugin: 'com.synopsys.integration.solution'
 apply plugin: 'groovy'
 
 dependencies {
