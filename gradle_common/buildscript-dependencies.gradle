@@ -1,1 +1,1 @@
-dependencies { classpath "com.synopsys.integration:common-gradle-plugin:1.4.2" }
+dependencies { classpath "com.synopsys.integration:common-gradle-plugin:1.5.0" }
