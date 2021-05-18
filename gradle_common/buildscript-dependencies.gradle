@@ -1,2 +1,2 @@
-buildscript.ext { commonGradlePluginVersion = '1.11.1' }
+project.ext { commonGradlePluginVersion = '1.11.1' }
 dependencies { classpath "com.synopsys.integration:common-gradle-plugin:${commonGradlePluginVersion}" }
