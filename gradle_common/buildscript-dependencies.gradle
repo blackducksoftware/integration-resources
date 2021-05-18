@@ -1,1 +1,2 @@
-dependencies { classpath "com.synopsys.integration:common-gradle-plugin:1.11.1" }
+ext { commonGradlePluginVersion = '1.11.1' }
+dependencies { classpath "com.synopsys.integration:common-gradle-plugin:${commonGradlePluginVersion}" }
