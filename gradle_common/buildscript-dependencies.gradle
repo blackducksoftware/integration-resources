@@ -1,2 +1,2 @@
-project.ext { commonGradlePluginVersion = '1.11.1' }
+ext.set('commonGradlePluginVersion', '1.11.1')
 dependencies { classpath "com.synopsys.integration:common-gradle-plugin:${commonGradlePluginVersion}" }
