@@ -1,1 +1,1 @@
-ext { cgpVersion = '1.11.1' }
+def cgpVersion = '1.11.1'
