@@ -1,3 +1,1 @@
-ext {
-    cgpVersion = '1.11.1'
-}
+ext { cgpVersion = '1.11.1' }
