@@ -1,1 +1,1 @@
-cgpDependency = 'com.synopsys.integration:common-gradle-plugin:1.11.1'
+project.ext.cgpDependency = 'com.synopsys.integration:common-gradle-plugin:1.11.1'
