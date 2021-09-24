@@ -1,5 +1,6 @@
 repositories {
-    maven { url "https://sig-repo.synopsys.com/bds-integrations-release" }
+    maven { url "https://sig-repo.synopsys.com/bds-integrations-release" }    
+    maven { url "https://sig-repo.synopsys.com/bds-bdio-release" }
     mavenCentral()
     maven { url 'https://plugins.gradle.org/m2/' }
 }
