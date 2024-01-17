@@ -1,1 +1,1 @@
-project.ext { managedCgpVersion = '2.0.2' }
+project.ext { managedCgpVersion = '2.0.3' }
